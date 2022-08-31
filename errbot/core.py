@@ -447,7 +447,16 @@ class ErrBot(Backend, StoreMixin):
         username = frm.person
         user_cmd_history = self.cmd_history[username]
 
-        log.info(f'Processing command "{cmd}" with parameters "{args}" from {frm}')
+        logmsg = (
+            f'Processing command "{cmd}" with parameters "{args}" from '
+            f'{frm.fullname} / {frm.nick} ({frm.userid})')
+
+        channelname = frm.channelname
+        if channelname and channelname != username:
+            # Don't append this if this is coming from direct message
+            logmsg += f" in #{channelname}"
+
+        log.info(logmsg)
 
         if (cmd, args) in user_cmd_history:
             user_cmd_history.remove((cmd, args))  # Avoids duplicate history items
